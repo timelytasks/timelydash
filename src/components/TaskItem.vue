@@ -1,8 +1,13 @@
 <template>
     <div class="task-item" v-bind:class="{'is-complete': task.completed}">
-        <h3><input type="checkbox" v-on:change="markComplete">{{ task.title }}</h3>
+        <p>
+            <input type="checkbox" v-on:change="markComplete">
+            {{ task.title }}
+            <button v-on:click="$emit('del-task', task.id)"
+                class="del">X</button>
+        </p>
         <p>{{ task.description }}</p>
-        <p>Created at: {{ task.created }}</p>
+        <!-- <p>Created at: {{ task.created }}</p> -->
     </div>
 </template>
 
@@ -13,7 +18,10 @@ export default {
     methods: {
         markComplete() {
             this.task.completed = !this.task.completed; 
-        }
+        },
+        // showTime() {
+        //     this.task.created = moment(this.task.created).format('MMMM Do YYYY, h:mm:ss a')
+        // }
     }
 }
 </script>
@@ -27,5 +35,14 @@ export default {
 
     .is-complete {
         text-decoration: line-through;
+    }
+    .del {
+        background: #ff0000;
+        color: #fff;
+        border: none;
+        padding: 8px 12px;
+        /* border-radius: 50%; */
+        cursor: pointer;
+        float: right;
     }
 </style>
