@@ -2,7 +2,7 @@
   <div id="app">
     <!-- <HelloWorld msg="Welcome to Your Vue.js App"/> -->
     <Header/>
-    <AddTask/>
+    <AddTask v-on:add-task="addTask"/>
     <Tasks v-bind:tasks="tasks" v-on:del-task="deleteTask"/>
   </div>
 </template>
@@ -11,6 +11,7 @@
 import Header from './components/layout/Header';
 import Tasks from './components/Tasks';
 import AddTask from './components/AddTask';
+import axios from 'axios'
 
 
 export default {
@@ -19,43 +20,39 @@ export default {
     Header,
     Tasks,
     AddTask,
-
   },
   data() {
     return {
-      // GET 
-      tasks: [
-          {
-              "id": 1,
-              "title": "Finish this project",
-              "description": "Finish this goddamned project fast!",
-              "completed": false,
-              "created": "2019-10-10T22:45:44.578617Z",
-              "url": "http://localhost:8000/api/v1/tasks/1/"
-          },
-          {
-              "id": 2,
-              "title": "Feed the cats",
-              "description": "Don't let the cats die of hunger",
-              "completed": false,
-              "created": "2019-10-10T22:46:01.000749Z",
-              "url": "http://localhost:8000/api/v1/tasks/2/"
-          },
-          {
-              "id": 3,
-              "title": "This task was done before I registered",
-              "description": "So why did I register it?",
-              "completed": true,
-              "created": "2019-10-10T23:18:29.067057Z",
-              "url": "http://localhost:8000/api/v1/tasks/3/"
-          }
-      ]
+      tasks: []
     }
   },
   methods: {
-    deleteTask(id) {
-      this.tasks = this.tasks.filter(task => task.id !== id);
-      // DELETE
+    async deleteTask(id) {
+      try {
+        let response = await axios.delete('http://localhost:8000/api/v1/tasks/' + id);
+        console.log(response)
+      } catch(e) {
+        console.error(e)
+      }
+    },
+    async addTask(newTask) {
+      console.log(newTask)
+      try {
+        let response = await axios.post('http://localhost:8000/api/v1/tasks/', newTask);
+        console.log(response)
+        this.tasks = response.data;
+      } catch(e) {
+        console.error(e)
+      }
+    }
+  },
+  async created() {
+    try {
+      let response = await axios.get('http://localhost:8000/api/v1/tasks/');
+      console.log(response)
+      this.tasks = response.data;
+    } catch(e) {
+      console.error(e)
     }
   }
 }
